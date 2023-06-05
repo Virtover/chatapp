@@ -7,6 +7,7 @@ services:
     ports:
       - 8000:8000
     environment:
+      SECRET_KEY_FILE: /run/secrets/secret_key
       DB_HOST: users-db:3306
       DB_USER: users
       DB_PASSWORD_FILE: /run/secrets/users-db-password
@@ -15,6 +16,7 @@ services:
         condition: service_healthy
     secrets:
       - users-db-password
+      - secret-key
 
   users-db:
     image: mysql:latest
@@ -39,6 +41,8 @@ secrets:
     file: ./secrets/users-db-password.txt
   users-db-root-password:
     file: ./secrets/users-db-root-password.txt
+  secret-key:
+    file: ./secrets/secret-key.txt
 
 volumes:
   users-db-data:
