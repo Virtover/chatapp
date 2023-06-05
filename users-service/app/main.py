@@ -16,6 +16,14 @@ app.add_middleware(
 )
 '''
 
+@app.get("/register")
+async def register():
+    pass
+
+@app.get("/login")
+async def login():
+    pass
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
