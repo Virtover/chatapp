@@ -2,4 +2,5 @@
 
 ## Configuration
 
-To generate secrets, run generate_secrets.py
+To generate secrets, run command:
+python generate_secrets.py
