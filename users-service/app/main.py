@@ -59,25 +59,3 @@ async def login(data: LoginData, db: AsyncSession = Depends(get_session)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password")
     
     return Token(token=encode({'username': user.username}))
-
-
-@app.get("/")
-async def root(db: AsyncSession = Depends(get_session)):
-    rd = RegisterData(
-        username='xdd',
-        password='2137',
-        email='krowa@pastwisko.com'
-    )
-    ld = LoginData(
-        username='xdd',
-        password='2137'
-    )
-    token1 = await register(data=rd)
-    #token2 = await login(data=ld)
-    #u1, u2 = decode(token1.token)['username'], decode(token2.token)['username']
-    return {
-        "token1": token1,
-        #"token2": token2,
-        #"u1": u1,
-        #"u2": u2,
-    }
