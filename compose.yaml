@@ -7,10 +7,11 @@ services:
     ports:
       - 8000:8000
     environment:
-      SECRET_KEY_FILE: /run/secrets/secret_key
-      DB_HOST: users-db:3306
-      DB_USER: users
-      DB_PASSWORD_FILE: /run/secrets/users-db-password
+      SECRET_KEY_FILE: /run/secrets/secret-key
+      POSTGRES_HOST: users-db:5432
+      POSTGRES_USER: users
+      POSTGRES_PASSWORD_FILE: /run/secrets/users-db-password
+      POSTGRES_DB: database
     depends_on:
       users-db:
         condition: service_healthy
@@ -19,28 +20,27 @@ services:
       - secret-key
 
   users-db:
-    image: mysql:latest
+    image: postgres:15.2
     environment:
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/users-db-root-password
-      MYSQL_DATABASE: users
-      MYSQL_USER: users
-      MYSQL_PASSWORD_FILE: /run/secrets/users-db-password
+      POSTGRES_DATABASE: users
+      POSTGRES_USER: users
+      POSTGRES_PASSWORD_FILE: /run/secrets/users-db-password
+      POSTGRES_DB: database
+    expose:
+      - 5432
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 10
     volumes:
-      - users-db-data:/var/lib/mysql
+      - users-db-data:/var/lib/postgresql/data
     secrets:
       - users-db-password
-      - users-db-root-password
 
 secrets:
   users-db-password:
     file: ./secrets/users-db-password.txt
-  users-db-root-password:
-    file: ./secrets/users-db-root-password.txt
   secret-key:
     file: ./secrets/secret-key.txt
 
