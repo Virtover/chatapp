@@ -32,7 +32,7 @@ const SignIn = ({ toggleForm, setLoggedIn }) => {
       })
       .then((json) => {
         const token = json.token;
-        localStorage.setItem(LS_LOGIN_DATA, token);
+        localStorage.setItem(LS_LOGIN_DATA, JSON.stringify({token: token, username: username}));
         setLoggedIn(true);
       })
       .catch((e) => {

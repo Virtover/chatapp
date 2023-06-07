@@ -3,7 +3,7 @@ import datetime
 from app.config import settings, pwd_context
 from app.database import init_models
 from app.dependencies import get_session
-from app.schemas import Token, LoginData, RegisterData
+from app.schemas import Token, LoginData, RegisterData, TokenWithUsername, Verification
 from app.models import User
 from app.token import encode, decode
 from fastapi import FastAPI, Depends, HTTPException, status
@@ -36,7 +36,7 @@ async def register(data: RegisterData, db: AsyncSession = Depends(get_session)):
     
     user = await db.scalar(select(User).where(User.email == str(data.email)))
     if user is not None:
-        raise HTTPException(status_code=400, detail="This email is used")
+        raise HTTPException(status_code=400, detail="This email address is used")
     
     new_user = User(
         username=data.username,
@@ -53,8 +53,17 @@ async def register(data: RegisterData, db: AsyncSession = Depends(get_session)):
 @app.post("/login", response_model=Token)
 async def login(data: LoginData, db: AsyncSession = Depends(get_session)):
     user = await db.scalar(select(User).where(User.username == str(data.username)))
-    
+
     if user is None or not pwd_context.verify(data.password, user.hashed_password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password")
     
     return Token(token=encode({'username': user.username}))
+
+
+@app.post("/verify_token", response_model=Verification)
+async def verify_token(data: TokenWithUsername, db: AsyncSession = Depends(get_session)):
+    user = await db.scalar(select(User).where(User.username == str(data.username)))
+    if user is None:
+        raise HTTPException(status_code=404, detail="User does not exist")
+    
+    return Verification(result=(encode({'username': user.username}) == data.token))

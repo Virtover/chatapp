@@ -12,3 +12,11 @@ class LoginData(BaseModel):
 
 class RegisterData(LoginData):
     email: str
+
+
+class TokenWithUsername(Token):
+    username: str
+
+
+class Verification(BaseModel):
+    result: bool
