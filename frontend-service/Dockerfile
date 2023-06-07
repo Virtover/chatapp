@@ -1,11 +1,11 @@
 FROM node:20
 
-WORKDIR /frontend
+WORKDIR /frontend-service
 
-COPY ./package.json /frontend/package.json
+COPY ./package.json /frontend-service/package.json
 
-COPY ./package-lock.json /frontend/package-lock.json
+COPY ./package-lock.json /frontend-service/package-lock.json
 
 RUN npm install
 
-COPY . /frontend
+COPY . /frontend-service
