@@ -3,6 +3,7 @@ import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import Chat from './components/Chat';
 import { LS_LOGIN_DATA } from './names';
+import "bootstrap/dist/css/bootstrap.min.css"
 
 const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -10,7 +11,7 @@ const App = () => {
 
   useEffect(() => {
     const loginData = localStorage.getItem(LS_LOGIN_DATA);
-    if (loginData) {
+    if (loginData != null) {
       setLoggedIn(true);
     }
   }, []);
@@ -20,7 +21,7 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div data-bs-theme="dark">
       {loggedIn ? (
         <Chat />
       ) : isSignIn ? (
