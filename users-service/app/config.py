@@ -17,7 +17,6 @@ class Settings(BaseSettings):
     postgres_user: str
     postgres_password_file: str
     postgres_db: str
-    frontend_url: str
 
     class Config:
         case_sensitive = False

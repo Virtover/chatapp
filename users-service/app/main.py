@@ -16,9 +16,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        settings.frontend_url,
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -33,9 +31,12 @@ async def on_startup():
 @app.post("/register", response_model=Token)
 async def register(data: RegisterData, db: AsyncSession = Depends(get_session)):
     user = await db.scalar(select(User).where(User.username == str(data.username)))
-
     if user is not None:
         raise HTTPException(status_code=400, detail="This username is taken")
+    
+    user = await db.scalar(select(User).where(User.email == str(data.email)))
+    if user is not None:
+        raise HTTPException(status_code=400, detail="This email is used")
     
     new_user = User(
         username=data.username,
@@ -52,7 +53,7 @@ async def register(data: RegisterData, db: AsyncSession = Depends(get_session)):
 @app.post("/login", response_model=Token)
 async def login(data: LoginData, db: AsyncSession = Depends(get_session)):
     user = await db.scalar(select(User).where(User.username == str(data.username)))
-
+    
     if user is None or not pwd_context.verify(data.password, user.hashed_password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password")
     

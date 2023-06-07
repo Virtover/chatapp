@@ -12,7 +12,6 @@ services:
       POSTGRES_USER: users
       POSTGRES_PASSWORD_FILE: /run/secrets/users-db-password
       POSTGRES_DB: database
-      FRONTEND_URL: http://localhost:3000
     depends_on:
       users-db:
         condition: service_healthy
@@ -42,7 +41,8 @@ services:
   frontend-service:
     build: ./frontend-service
     environment:
-      USERS_SERVICE_URL: http://localhost:8000
+      REACT_APP_USERS_SERVICE_URL: http://localhost:8000
+      WATCHPACK_POLLING: true
     command: npm start
     volumes:
       - ./frontend-service/src:/frontend-service/src
