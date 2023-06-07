@@ -42,7 +42,7 @@ services:
   frontend-service:
     build: ./frontend-service
     environment:
-      USERS_SERVICE_URL: http://localhost:8000
+      USERS_SERVICE_URL: http://localhost:3000
     command: npm start
     volumes:
       - ./frontend-service/src:/frontend-service/src
