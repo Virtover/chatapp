@@ -51,7 +51,7 @@ const App = () => {
   return (
     <div data-bs-theme="dark">
       {loggedIn ? (
-        <Chat />
+        <Chat setLoggedIn={setLoggedIn}/>
       ) : isSignIn ? (
         <SignIn toggleForm={toggleForm} setLoggedIn={setLoggedIn} />
       ) : (
