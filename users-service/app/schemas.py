@@ -1,8 +1,12 @@
+from datetime import datetime
 from pydantic import BaseModel
 
 
-class Token(BaseModel):
+class UserData(BaseModel):
+    username: str
     token: str
+    email: str
+    join_date: datetime
 
 
 class LoginData(BaseModel):
@@ -14,7 +18,8 @@ class RegisterData(LoginData):
     email: str
 
 
-class TokenWithUsername(Token):
+class TokenWithUsername(BaseModel):
+    token: str
     username: str
 
 

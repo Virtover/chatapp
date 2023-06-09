@@ -3,7 +3,7 @@ import datetime
 from app.config import settings, pwd_context
 from app.database import init_models
 from app.dependencies import get_session
-from app.schemas import Token, LoginData, RegisterData, TokenWithUsername, Verification
+from app.schemas import UserData, LoginData, RegisterData, TokenWithUsername, Verification
 from app.models import User
 from app.token import encode, decode
 from fastapi import FastAPI, Depends, HTTPException, status
@@ -28,7 +28,7 @@ async def on_startup():
     await init_models()
 
 
-@app.post("/register", response_model=Token)
+@app.post("/register", response_model=UserData)
 async def register(data: RegisterData, db: AsyncSession = Depends(get_session)):
     user = await db.scalar(select(User).where(User.username == str(data.username)))
     if user is not None:
@@ -47,17 +47,27 @@ async def register(data: RegisterData, db: AsyncSession = Depends(get_session)):
     db.add(new_user)
     await db.commit()
 
-    return Token(token=encode({'username': new_user.username}))
+    return UserData(
+        username=new_user.username,
+        token=encode({'username': new_user.username}),
+        email=new_user.email,
+        join_date=new_user.register_time,
+    )
 
 
-@app.post("/login", response_model=Token)
+@app.post("/login", response_model=UserData)
 async def login(data: LoginData, db: AsyncSession = Depends(get_session)):
     user = await db.scalar(select(User).where(User.username == str(data.username)))
 
     if user is None or not pwd_context.verify(data.password, user.hashed_password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password")
-    
-    return Token(token=encode({'username': user.username}))
+
+    return UserData(
+        username=user.username,
+        token=encode({'username': user.username}),
+        email=user.email,
+        join_date=user.register_time,
+    )
 
 
 @app.post("/verify_token", response_model=Verification)
