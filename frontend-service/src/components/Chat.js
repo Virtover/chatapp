@@ -12,10 +12,7 @@ const Chat = ({ setLoggedIn }) => {
   return (
     <div className="Chat-container">
       <div className="Nav-bar">
-        <button 
-          className="btn btn-primary" 
-          onClick={logout}
-        >
+        <button className="btn btn-primary" onClick={logout}>
           Logout
         </button>
         <div className="App-info">
@@ -26,11 +23,7 @@ const Chat = ({ setLoggedIn }) => {
         {/* Chat implementation */}
       </div>
       <div className="Chat-input form-group mb-3">
-        <input 
-          type="text" 
-          className="form-control" 
-          placeholder="Type your message..." 
-        />
+        <input type="text" className="form-control" placeholder="Type your message..."/>
         <button className="btn btn-outline-primary">
           Send
         </button>
