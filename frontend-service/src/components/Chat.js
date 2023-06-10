@@ -13,6 +13,9 @@ const Chat = ({ setLoggedIn }) => {
     setLoggedIn(false);
   };
 
+  const username = JSON.parse(localStorage.getItem(LS_LOGIN_DATA)).username;
+  console.log(username);
+
   return (
     <div className="Chat-container">
       <div className="Nav-bar">
@@ -22,6 +25,7 @@ const Chat = ({ setLoggedIn }) => {
         <div className="App-info">
           Chatapp
         </div>
+        <div className="User-info"><strong>{username}</strong></div>
       </div>
       <div className="Chat-messages">
         <ChatMessageInput setMessageInputHeight={setMessageInputHeight} messageInputHeight={messageInputHeight} defaultMessageInputHeight={defaultMessageInputHeight}/>

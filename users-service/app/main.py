@@ -38,6 +38,9 @@ async def register(data: RegisterData, db: AsyncSession = Depends(get_session)):
     if user is not None:
         raise HTTPException(status_code=400, detail="This email address is used")
     
+    if len(data.username) > 40:
+        raise HTTPException(status_code=400, detail="Username is too long")
+    
     new_user = User(
         username=data.username,
         email=data.email,
