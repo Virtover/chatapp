@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../styles/chat.css';
 
-const ChatMessagesContainer = () => {
+const ChatMessagesContainer = ({ messageInputHeight }) => {
     //TODO
-    return (<></>);
+    return (
+        <div style={{height: `calc(100% - ${messageInputHeight}px - 10px)` }} className="ChatMessagesContainer">
+
+        </div>
+    );
 }
 
 export default ChatMessagesContainer;

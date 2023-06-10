@@ -29,7 +29,7 @@ const Chat = ({ setLoggedIn }) => {
       </div>
       <div className="Chat-messages">
         <ChatMessageInput setMessageInputHeight={setMessageInputHeight} messageInputHeight={messageInputHeight} defaultMessageInputHeight={defaultMessageInputHeight}/>
-        <ChatMessagesContainer/>
+        <ChatMessagesContainer messageInputHeight={messageInputHeight}/>
       </div>
     </div>
   );
