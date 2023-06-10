@@ -41,6 +41,12 @@ async def register(data: RegisterData, db: AsyncSession = Depends(get_session)):
     if len(data.username) > 40:
         raise HTTPException(status_code=400, detail="Username is too long")
     
+    if len(data.username) < 3:
+        raise HTTPException(status_code=400, detail="Username should contain at least 3 characters")
+    
+    if len(data.password) < 8:
+        raise HTTPException(status_code=400, detail="Password should contain at least 8 characters")
+    
     new_user = User(
         username=data.username,
         email=data.email,
