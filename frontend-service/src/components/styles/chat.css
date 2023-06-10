@@ -32,7 +32,6 @@
 .Chat-messages {
   width: calc(100vw - 8px);
   height: calc(100vh - 74px);
-  background-color: #1f1f1f;
   border-radius: 10px;
   margin-top: 12px;
   margin-left: 4px;
