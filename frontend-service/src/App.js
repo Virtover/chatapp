@@ -4,7 +4,6 @@ import SignUp from './components/SignUp';
 import Chat from './components/Chat';
 import { LS_LOGIN_DATA } from './names';
 import { USERS_SERVICE_URL } from './config';
-import "bootstrap/dist/css/bootstrap.min.css"
 
 const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);

@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { LS_LOGIN_DATA } from '../names';
-import "bootstrap/dist/css/bootstrap.min.css"
-import './styles/chat.css'
+import ChatMessageInput from './utils/ChatMessageInput';
+import './styles/chat.css';
 
 const Chat = ({ setLoggedIn }) => {
+  const defaultMessageInputHeight = 40;
+  const [messageInputHeight, setMessageInputHeight] = useState(defaultMessageInputHeight);
+
   const logout = () => {
     localStorage.removeItem(LS_LOGIN_DATA);
     setLoggedIn(false);
@@ -21,12 +24,8 @@ const Chat = ({ setLoggedIn }) => {
       </div>
       <div className="Chat-messages">
         {/* Chat implementation */}
-      </div>
-      <div className="Chat-input form-group mb-3">
-        <input type="text" className="form-control" placeholder="Type your message..."/>
-        <button className="btn btn-outline-primary">
-          Send
-        </button>
+        <ChatMessageInput setMessageInputHeight={setMessageInputHeight} messageInputHeight={messageInputHeight} defaultMessageInputHeight={defaultMessageInputHeight}/>
+        <div/>
       </div>
     </div>
   );

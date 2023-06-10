@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { LS_LOGIN_DATA } from '../names';
 import { USERS_SERVICE_URL } from '../config';
-import "bootstrap/dist/css/bootstrap.min.css"
-import './styles/auth.css'
+import './styles/auth.css';
 
 const SignUp = ({ toggleForm, setLoggedIn }) => {
   const [username, setUsername] = useState('');
