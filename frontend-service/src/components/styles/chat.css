@@ -78,6 +78,8 @@
   border-bottom-left-radius: 0px;
 }
 
+.ChatMessageInput textarea { resize: none; }
+
 .ChatMessagesContainer {
   margin-bottom: 10px;
   margin-left: 20px;
