@@ -13,6 +13,15 @@ const ChatMessageInput = ({ messageInputHeight, setMessageInputHeight, defaultMe
     adjustTextareaHeight();
   }, [message]);
 
+  const adjustTextareaHeight = () => {
+    if (textareaRef.current) {
+      setMessageInputHeight(Math.min(
+        textareaRef.current.scrollHeight,
+        MAX_TEXTAREA_ROWS * parseFloat(getComputedStyle(textareaRef.current).lineHeight)
+      ));
+    }
+  };
+
   const handleMessageChange = (event) => {
     const inputValue = event.target.value;
     if (inputValue.length <= MAX_TEXTAREA_CHARACTERS) {
@@ -74,15 +83,6 @@ const ChatMessageInput = ({ messageInputHeight, setMessageInputHeight, defaultMe
         const newPosition = selectionStart + lines[currentLineIndex].length + 1;
         textareaRef.current.setSelectionRange(newPosition, newPosition);
       }
-    }
-  };
-
-  const adjustTextareaHeight = () => {
-    if (textareaRef.current) {
-      setMessageInputHeight(Math.min(
-        textareaRef.current.scrollHeight,
-        MAX_TEXTAREA_ROWS * parseFloat(getComputedStyle(textareaRef.current).lineHeight)
-      ));
     }
   };
 

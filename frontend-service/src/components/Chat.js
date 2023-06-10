@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { LS_LOGIN_DATA } from '../names';
 import ChatMessageInput from './utils/ChatMessageInput';
+import ChatMessagesContainer from './utils/ChatMessagesContainer';
 import './styles/chat.css';
 
 const Chat = ({ setLoggedIn }) => {
@@ -23,9 +24,8 @@ const Chat = ({ setLoggedIn }) => {
         </div>
       </div>
       <div className="Chat-messages">
-        {/* Chat implementation */}
         <ChatMessageInput setMessageInputHeight={setMessageInputHeight} messageInputHeight={messageInputHeight} defaultMessageInputHeight={defaultMessageInputHeight}/>
-        <div/>
+        <ChatMessagesContainer/>
       </div>
     </div>
   );
