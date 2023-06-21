@@ -1,4 +1,6 @@
 import datetime
+import random
+import string
 
 from app.config import settings, pwd_context
 from app.database import init_models
@@ -10,6 +12,8 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+
+secret_key = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(64))
 
 app = FastAPI()
 
@@ -58,7 +62,7 @@ async def register(data: RegisterData, db: AsyncSession = Depends(get_session)):
 
     return UserData(
         username=new_user.username,
-        token=encode({'username': new_user.username}),
+        token=encode({'username': new_user.username}, secret_key),
         email=new_user.email,
         join_date=new_user.register_time,
     )
@@ -73,7 +77,7 @@ async def login(data: LoginData, db: AsyncSession = Depends(get_session)):
 
     return UserData(
         username=user.username,
-        token=encode({'username': user.username}),
+        token=encode({'username': user.username}, secret_key),
         email=user.email,
         join_date=user.register_time,
     )
@@ -85,4 +89,4 @@ async def verify_token(data: TokenWithUsername, db: AsyncSession = Depends(get_s
     if user is None:
         raise HTTPException(status_code=404, detail="User does not exist")
     
-    return Verification(result=(encode({'username': user.username}) == data.token))
+    return Verification(result=(encode({'username': user.username}, secret_key) == data.token))

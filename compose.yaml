@@ -4,10 +4,9 @@ services:
     working_dir: /users-service/users-service
     volumes:
       - .:/users-service
-    ports:
-      - 8000:8000
+    expose:
+      - 8001
     environment:
-      SECRET_KEY_FILE: /run/secrets/secret-key
       POSTGRES_HOST: users-db:5432
       POSTGRES_USER: users
       POSTGRES_PASSWORD_FILE: /run/secrets/users-db-password
@@ -17,7 +16,6 @@ services:
         condition: service_healthy
     secrets:
       - users-db-password
-      - secret-key
 
   users-db:
     image: postgres:15.2
@@ -38,14 +36,26 @@ services:
     secrets:
       - users-db-password
 
-  frontend-service:
-    build: ./frontend-service
+  api-gateway:
+    build: ./api-gateway
+    working_dir: /api-gateway/api-gateway
+    volumes:
+      - .:/api-gateway
+    ports:
+      - 8000:8000
     environment:
-      REACT_APP_USERS_SERVICE_URL: http://localhost:8000
+      USERS_SERVICE_URL: http://users-service:8001
+    depends_on:
+      - users-service
+
+  frontend:
+    build: ./frontend
+    environment:
+      REACT_APP_API_GATEWAY_URL: http://localhost:8000
       WATCHPACK_POLLING: true
     command: npm start
     volumes:
-      - ./frontend-service/src:/frontend-service/src
+      - ./frontend/src:/frontend/src
     ports:
       - 3000:3000
     depends_on:
@@ -54,8 +64,6 @@ services:
 secrets:
   users-db-password:
     file: ./secrets/users-db-password.txt
-  secret-key:
-    file: ./secrets/secret-key.txt
 
 volumes:
   users-db-data:

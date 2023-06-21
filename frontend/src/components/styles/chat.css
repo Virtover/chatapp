@@ -1,0 +1,87 @@
+.Chat-container {
+  width: 100vw;
+  height: 100vh;
+  background-color: #121212;
+  color: rgb(220, 220, 220);
+}
+
+.Nav-bar {
+  width: 100vw;
+  height: 50px;
+  background-color: #2b2b2b;
+}
+
+.Nav-bar > button {
+  position: absolute;
+  height: 36px;
+  top: 7px;
+  right: 20px;
+  text-align: center; 
+  line-height: 14px;
+}
+
+.App-info {
+  position: absolute;
+  height: 100%;
+  font-size: x-large;
+  text-align: center;
+  padding-left: 20px;
+  padding-top: 5px;
+}
+
+.User-info {
+  position: absolute;
+  height: 100%;
+  text-align: center;
+  padding-top: 12px;
+  right: 120px;
+}
+
+.Chat-messages {
+  width: calc(100vw - 8px);
+  height: calc(100vh - 74px);
+  border-radius: 10px;
+  margin-top: 12px;
+  margin-left: 4px;
+  margin-right: 4px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.ChatMessageInput {
+  align-self: flex-end;
+  width: calc(100vw - 44px);
+  height: 40px;
+  margin-bottom: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.ChatMessageInput .input-group-prepend label {
+  height: 100%;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.ChatMessageInput .input-group {
+  height: 100%;
+}
+
+.ChatMessageInput .btn-outline-primary {
+  height: 100%;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+
+.ChatMessageInput textarea { resize: none; }
+
+.ChatMessagesContainer {
+  margin-bottom: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+}

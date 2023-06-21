@@ -3,7 +3,7 @@ import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import Chat from './components/Chat';
 import { LS_LOGIN_DATA } from './names';
-import { USERS_SERVICE_URL } from './config';
+import { API_GATEWAY_URL } from './config';
 
 const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -25,7 +25,7 @@ const App = () => {
         }),
       };
       
-      fetch(`${USERS_SERVICE_URL}/verify_token`, options)
+      fetch(`${API_GATEWAY_URL}/verify_token`, options)
         .then((response) => {
           if (response.ok) {
             return response.json();

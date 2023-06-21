@@ -10,8 +10,6 @@ def save_to_file(content, filename):
     with open(filename, 'w') as file:
         file.write(content)
 
-secret_key = generate_random_string(64)
 users_db_password = generate_random_string(64)
 
-save_to_file(secret_key, 'secrets/secret-key.txt')
 save_to_file(users_db_password, 'secrets/users-db-password.txt')

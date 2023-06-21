@@ -12,7 +12,6 @@ class Settings(BaseSettings):
     the content of .env file.
     """
 
-    secret_key_file: str
     postgres_host: str
     postgres_user: str
     postgres_password_file: str

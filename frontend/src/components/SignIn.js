@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { LS_LOGIN_DATA } from '../names';
-import { USERS_SERVICE_URL } from '../config';
+import { API_GATEWAY_URL } from '../config';
 import './styles/auth.css';
 
 const SignIn = ({ toggleForm, setLoggedIn }) => {
@@ -20,7 +20,7 @@ const SignIn = ({ toggleForm, setLoggedIn }) => {
       }),
     };
     
-    fetch(`${USERS_SERVICE_URL}/login`, options)
+    fetch(`${API_GATEWAY_URL}/login`, options)
       .then((response) => {
         if (response.ok) {
           return response.json();
