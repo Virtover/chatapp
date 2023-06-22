@@ -59,7 +59,7 @@ services:
     ports:
       - 3000:3000
     depends_on:
-      - users-service
+      - api-gateway
 
 secrets:
   users-db-password:
