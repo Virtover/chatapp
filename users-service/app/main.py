@@ -10,7 +10,7 @@ from app.models import User
 from app.token import encode, decode
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import select, update
+from sqlalchemy import select, update, or_
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -46,6 +46,12 @@ async def register(data: RegisterData, db: AsyncSession = Depends(get_session)):
 
     try:
         async with db.begin():
+            await db.execute(
+                select(User)
+                .where(or_(User.username == str(data.username), User.email == str(data.email)))
+                .with_for_update()
+            )
+            
             user = await db.scalar(select(User).where(User.username == str(data.username)))
             if user is not None:
                 raise HTTPException(status_code=400, detail="This username is taken")
