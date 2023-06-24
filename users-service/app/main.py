@@ -10,8 +10,8 @@ from app.models import User
 from app.token import encode, decode
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import select, update, or_
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import select, update
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 secret_key = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(64))
@@ -43,42 +43,26 @@ async def register(data: RegisterData, db: AsyncSession = Depends(get_session)):
     
     if len(data.password) < 8:
         raise HTTPException(status_code=400, detail="Password should contain at least 8 characters")
-
+    
+    new_user = User(
+        username=data.username,
+        email=data.email,
+        hashed_password=pwd_context.hash(data.password),
+        register_time=datetime.datetime.utcnow()
+    )
+    
     try:
-        async with db.begin():
-            await db.execute(
-                select(User)
-                .where(or_(User.username == str(data.username), User.email == str(data.email)))
-                .with_for_update()
-            )
-            
-            user = await db.scalar(select(User).where(User.username == str(data.username)))
-            if user is not None:
-                raise HTTPException(status_code=400, detail="This username is taken")
-            
-            user = await db.scalar(select(User).where(User.email == str(data.email)))
-            if user is not None:
-                raise HTTPException(status_code=400, detail="This email address is used")
-            
-            new_user = User(
-                username=data.username,
-                email=data.email,
-                hashed_password=pwd_context.hash(data.password),
-                register_time=datetime.datetime.utcnow()
-            )
-            db.add(new_user)
-        
+        await db.merge(new_user)
         await db.commit()
+    except IntegrityError:
+        raise HTTPException(status_code=400, detail="User already exists")
 
-        return UserData(
-            username=new_user.username,
-            token=encode({'username': new_user.username}, secret_key),
-            email=new_user.email,
-            join_date=new_user.register_time,
-        )
-    except SQLAlchemyError:
-        await db.rollback()
-        raise HTTPException(status_code=500, detail="Internal server error")
+    return UserData(
+        username=new_user.username,
+        token=encode({'username': new_user.username}, secret_key),
+        email=new_user.email,
+        join_date=new_user.register_time,
+    )
 
 
 @app.post("/login", response_model=UserData)
