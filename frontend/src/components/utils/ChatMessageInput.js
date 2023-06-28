@@ -87,7 +87,7 @@ const ChatMessageInput = ({ messageInputHeight, setMessageInputHeight, defaultMe
   };
 
   return (
-    <form onSubmit={handleSubmitMessage} className="ChatMessageInput" style={{height: `${messageInputHeight}px` }}>
+    <form className="ChatMessageInput" style={{height: `${messageInputHeight}px` }}>
       <div className="input-group">
         <div className="input-group-prepend">
           <label htmlFor="fileInput" className="input-group-text">
@@ -111,7 +111,7 @@ const ChatMessageInput = ({ messageInputHeight, setMessageInputHeight, defaultMe
           maxLength={MAX_TEXTAREA_CHARACTERS}
         />
         <div className="input-group-append">
-          <button type="submit" className="btn btn-outline-primary">
+          <button type="button" onClick={handleSubmitMessage} className="btn btn-outline-primary">
             <FontAwesomeIcon icon={faPaperPlane} />
           </button>
         </div>
