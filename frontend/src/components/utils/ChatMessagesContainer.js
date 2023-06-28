@@ -27,18 +27,22 @@ const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
   useEffect(() => {
     const socket = new WebSocket(`${API_GATEWAY_WS_URL}/ws`); 
     webSocketRef.current = socket;
-    socket.addEventListener('message', handleMessage);
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setMessages(prevMessages => [
+          {id: prevMessages.length + 1, 
+          date: new Date(data.date), 
+          sender: data.username, 
+          isFile: data.isFile, 
+          content: data.content}, 
+          ...prevMessages
+        ]
+      );
+    };
     return () => {
       socket.close();
     };
   }, []);
-
-  const handleMessage = (event) => {
-    console.log('Received message:', event.data);
-    return; //temp: we dont know event.data structure yet
-    //TODO: check if message is already added
-    setMessages(prevMessages => [...prevMessages, event.data]);
-  };
 
   const handleDownload = async (url) => {
     try {

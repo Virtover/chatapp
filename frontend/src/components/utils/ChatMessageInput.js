@@ -42,9 +42,18 @@ const ChatMessageInput = ({ messageInputHeight, setMessageInputHeight, defaultMe
   const handleSubmitFile = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile != null && webSocketRef.current) {
-      // TODO: Process the file here
-      console.log('File:', selectedFile);
+      const json = {username: loginData.username, token: loginData.token, isFile: true, content: JSON.stringify(message)};
+      webSocketRef.current.send(JSON.stringify(json));
     }
+  };
+
+  const handleSubmitMessage = () => {
+    if (message !== '' && webSocketRef.current) {
+      const json = {username: loginData.username, token: loginData.token, isFile: false, content: message};
+      webSocketRef.current.send(JSON.stringify(json));
+    }
+    setMessage('');
+    setMessageInputHeight(defaultMessageInputHeight);
   };
 
   const handleKeyDown = (event) => {
@@ -58,16 +67,6 @@ const ChatMessageInput = ({ messageInputHeight, setMessageInputHeight, defaultMe
       event.preventDefault();
       moveCursorToNextLine();
     }
-  };
-
-  const handleSubmitMessage = () => {
-    if (message !== '') {
-      // TODO: Process the message here
-      console.log('Message:\n', message);
-      
-    }
-    setMessage('');
-    setMessageInputHeight(defaultMessageInputHeight);
   };
 
   const moveCursorToPreviousLine = () => {

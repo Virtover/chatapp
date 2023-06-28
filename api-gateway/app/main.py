@@ -1,3 +1,4 @@
+import datetime
 import httpx
 import json
 from app.config import settings
@@ -70,6 +71,21 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_json()
-            await manager.broadcast_json(data)
+            verification = httpx.post(f'{settings.users_service_url}/verify_token', json=data)
+            if verification.status_code == 200 and verification.json()['result']:
+                if not data['isFile']:
+                    data['date'] = datetime.datetime.utcnow().isoformat()
+                    await manager.broadcast_json(data)
+                else:
+                    print("file there!") #temp, FEATURE TO ADD IN FUTURE!!!
     except WebSocketDisconnect:
         manager.disconnect(websocket)
+
+
+@app.post("/load_more")
+async def load_more(data: Dict[str, Any]):
+    result = httpx.post(f'{settings.messages_service_url}/load_more', json=data)
+    if result.status_code == 200:
+        return result.json()
+    else:
+        raise HTTPException(status_code=result.status_code, detail=result.json()['detail'])

@@ -1,4 +1,4 @@
-#from app.database import init_models
+from app.database import init_models
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
@@ -16,9 +16,9 @@ app.add_middleware(
 )
 
 
-'''@app.on_event("startup")
+@app.on_event("startup")
 async def on_startup():
-    await init_models()'''
+    await init_models()
 
 
 
