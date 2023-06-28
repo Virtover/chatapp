@@ -1,5 +1,6 @@
 import datetime
 import random
+import re
 import string
 
 from app.config import settings, pwd_context
@@ -35,13 +36,22 @@ async def on_startup():
 
 @app.post("/register", response_model=UserData)
 async def register(data: RegisterData, db: AsyncSession = Depends(get_session)):
-    if len(data.username) > 40:
-        raise HTTPException(status_code=400, detail="Username is too long")
+    if re.match(r'^\w+$', data.username) is None:
+        raise HTTPException(
+            status_code=400, 
+            detail="Username should contain only alphanumeric characters and underscores"
+        )
     
-    if len(data.username) < 3:
-        raise HTTPException(status_code=400, detail="Username should contain at least 3 characters")
+    if re.match(r'^\w{3,}$', data.username) is None:
+        raise HTTPException(status_code=400, detail="Username too short")
     
-    if len(data.password) < 8:
+    if re.match(r'^\w{,40}$', data.username) is None:
+        raise HTTPException(status_code=400, detail="Username too long")
+    
+    if re.match(r'^[\w.-]+@[\w.-]+\.\w+$', data.email) is None:
+        raise HTTPException(status_code=400, detail="Invalid email")
+    
+    if re.match(r'^\S{8,}$', data.password) is None:
         raise HTTPException(status_code=400, detail="Password should contain at least 8 characters")
     
     new_user = User(
@@ -50,7 +60,7 @@ async def register(data: RegisterData, db: AsyncSession = Depends(get_session)):
         hashed_password=pwd_context.hash(data.password),
         register_time=datetime.datetime.utcnow()
     )
-    
+
     try:
         await db.merge(new_user)
         await db.commit()
