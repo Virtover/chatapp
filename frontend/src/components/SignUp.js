@@ -3,7 +3,7 @@ import { LS_LOGIN_DATA } from '../names';
 import { API_GATEWAY_URL } from '../config';
 import './styles/auth.css';
 
-const SignUp = ({ toggleForm, setLoggedIn }) => {
+const SignUp = ({ toggleForm, setLoginData }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,7 +33,7 @@ const SignUp = ({ toggleForm, setLoggedIn }) => {
       })
       .then((json) => {
         localStorage.setItem(LS_LOGIN_DATA, JSON.stringify(json));
-        setLoggedIn(true);
+        setLoginData(json);
       })
       .catch((e) => {
         const message = e.message;

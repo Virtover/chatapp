@@ -4,13 +4,13 @@ import ChatMessageInput from './utils/ChatMessageInput';
 import ChatMessagesContainer from './utils/ChatMessagesContainer';
 import './styles/chat.css';
 
-const Chat = ({ setLoggedIn }) => {
+const Chat = ({ setLoginData }) => {
   const defaultMessageInputHeight = 40;
   const [messageInputHeight, setMessageInputHeight] = useState(defaultMessageInputHeight);
 
   const logout = () => {
+    setLoginData(null);
     localStorage.removeItem(LS_LOGIN_DATA);
-    setLoggedIn(false);
   };
 
   const username = JSON.parse(localStorage.getItem(LS_LOGIN_DATA)).username;

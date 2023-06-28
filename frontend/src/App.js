@@ -6,14 +6,14 @@ import { LS_LOGIN_DATA } from './names';
 import { API_GATEWAY_URL } from './config';
 
 const App = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
   const [isSignIn, setIsSignIn] = useState(true);
+  const [loginData, setLoginData] = useState(null);
 
   useEffect(() => {
-    const loginData = localStorage.getItem(LS_LOGIN_DATA);
-    if (loginData) {
-      setLoggedIn(true);
-      const dataParsed = JSON.parse(loginData);
+    const data = localStorage.getItem(LS_LOGIN_DATA);
+    if (data) {
+      const dataParsed = JSON.parse(data);
+      setLoginData(dataParsed);
       const options = {
         method: "POST",
         headers: {
@@ -35,10 +35,14 @@ const App = () => {
           });
         })
         .then((json) => {
-          setLoggedIn(json.result);
+          if (json.result) {
+            setLoginData(dataParsed);
+          } else {
+            setLoginData(null);
+          }
         })
         .catch((e) => {
-          setLoggedIn(false);
+          setLoginData(null);
         });
     }
   }, []);
@@ -49,12 +53,12 @@ const App = () => {
 
   return (
     <div data-bs-theme="dark">
-      {loggedIn ? (
-        <Chat setLoggedIn={setLoggedIn}/>
+      {loginData ? (
+        <Chat setLoginData={setLoginData} />
       ) : isSignIn ? (
-        <SignIn toggleForm={toggleForm} setLoggedIn={setLoggedIn} />
+        <SignIn toggleForm={toggleForm} setLoginData={setLoginData} />
       ) : (
-        <SignUp toggleForm={toggleForm} setLoggedIn={setLoggedIn} />
+        <SignUp toggleForm={toggleForm} setLoginData={setLoginData} />
       )}
     </div>
   );
