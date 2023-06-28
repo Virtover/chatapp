@@ -52,6 +52,8 @@ services:
     depends_on:
       messages-db:
         condition: service_healthy
+    secrets:
+      - messages-db-password
 
   messages-db:
     image: postgres:15.2

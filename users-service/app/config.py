@@ -1,5 +1,3 @@
-import sys
-
 from passlib.context import CryptContext
 from pydantic import BaseSettings
 
