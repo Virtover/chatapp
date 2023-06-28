@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../styles/chat.css';
+import { API_GATEWAY_WS_URL } from '../../config';
 
 const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
   const [loading, setLoading] = useState(false);
@@ -24,21 +25,13 @@ const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
   }, []);
 
   useEffect(() => {
-    const socket = new WebSocket('wss://your-websocket-url'); //temp url
-
+    const socket = new WebSocket(`${API_GATEWAY_WS_URL}/ws`); 
     webSocketRef.current = socket;
-
-    socket.addEventListener('open', handleOpen);
     socket.addEventListener('message', handleMessage);
-
     return () => {
       socket.close();
     };
   }, []);
-
-  const handleOpen = () => {
-    console.log('WebSocket connection opened');
-  };
 
   const handleMessage = (event) => {
     console.log('Received message:', event.data);

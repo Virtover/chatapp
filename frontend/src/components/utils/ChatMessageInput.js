@@ -2,12 +2,22 @@ import React, { useState, useEffect, useRef } from 'react';
 import '../styles/chat.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperclip, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { API_GATEWAY_WS_URL } from '../../config';
 
-const ChatMessageInput = ({ messageInputHeight, setMessageInputHeight, defaultMessageInputHeight }) => {
+const ChatMessageInput = ({ messageInputHeight, setMessageInputHeight, defaultMessageInputHeight, loginData }) => {
   const [message, setMessage] = useState('');
   const textareaRef = useRef(null);
+  const webSocketRef = useRef(null);
   const MAX_TEXTAREA_ROWS = 10;
   const MAX_TEXTAREA_CHARACTERS = 2000;
+
+  useEffect(() => {
+    const socket = new WebSocket(`${API_GATEWAY_WS_URL}/ws`); 
+    webSocketRef.current = socket;
+    return () => {
+      socket.close();
+    };
+  }, []);
 
   useEffect(() => {
     adjustTextareaHeight();
@@ -31,7 +41,7 @@ const ChatMessageInput = ({ messageInputHeight, setMessageInputHeight, defaultMe
 
   const handleSubmitFile = (event) => {
     const selectedFile = event.target.files[0];
-    if (selectedFile != null) {
+    if (selectedFile != null && webSocketRef.current) {
       // TODO: Process the file here
       console.log('File:', selectedFile);
     }

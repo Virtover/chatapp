@@ -1,7 +1,7 @@
 import httpx
 import json
 from app.config import settings
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, Any
 
@@ -43,3 +43,33 @@ async def verify_token(data: Dict[str, Any]):
         return result.json()
     else:
         raise HTTPException(status_code=result.status_code, detail=result.json()['detail'])
+
+
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: list[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def broadcast_json(self, message: str):
+        for connection in self.active_connections:
+            await connection.send_json(message)
+
+
+manager = ConnectionManager()
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_json()
+            await manager.broadcast_json(data)
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)

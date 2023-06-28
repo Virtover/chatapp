@@ -11,5 +11,7 @@ def save_to_file(content, filename):
         file.write(content)
 
 users_db_password = generate_random_string(64)
+messages_db_password = generate_random_string(64)
 
 save_to_file(users_db_password, 'secrets/users-db-password.txt')
+save_to_file(messages_db_password, 'secrets/messages-db-password.txt')

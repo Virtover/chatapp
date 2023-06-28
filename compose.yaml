@@ -37,6 +37,40 @@ services:
     secrets:
       - users-db-password
 
+  messages-service:
+    build: ./messages-service
+    working_dir: /messages-service/messages-service
+    volumes:
+      - .:/messages-service
+    expose:
+      - 8002
+    environment:
+      POSTGRES_HOST: messages-db:5432
+      POSTGRES_USER: messages
+      POSTGRES_PASSWORD_FILE: /run/secrets/messages-db-password
+      POSTGRES_DB: database
+    depends_on:
+      messages-db:
+        condition: service_healthy
+
+  messages-db:
+    image: postgres:15.2
+    environment:
+      POSTGRES_USER: messages
+      POSTGRES_PASSWORD_FILE: /run/secrets/messages-db-password
+      POSTGRES_DB: database
+    expose:
+      - 5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U messages -d database"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - messages-db-data:/var/lib/postgresql/data
+    secrets:
+      - messages-db-password
+
   api-gateway:
     build: ./api-gateway
     working_dir: /api-gateway/api-gateway
@@ -46,13 +80,16 @@ services:
       - 8000:8000
     environment:
       USERS_SERVICE_URL: http://users-service:8001
+      MESSAGES_SERVICE_URL: http://messages-service:8002
     depends_on:
       - users-service
+      - messages-service
 
   frontend:
     build: ./frontend
     environment:
       REACT_APP_API_GATEWAY_URL: http://localhost:8000
+      REACT_APP_API_GATEWAY_WS_URL: ws://localhost:8000
       WATCHPACK_POLLING: true
     command: npm start
     volumes:
@@ -65,6 +102,9 @@ services:
 secrets:
   users-db-password:
     file: ./secrets/users-db-password.txt
+  messages-db-password:
+    file: ./secrets/messages-db-password.txt
 
 volumes:
   users-db-data:
+  messages-db-data:

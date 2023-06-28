@@ -9,8 +9,10 @@ class Settings(BaseSettings):
     the content of .env file.
     """
 
-    users_service_url: str
-    messages_service_url: str
+    postgres_host: str
+    postgres_user: str
+    postgres_password_file: str
+    postgres_db: str
 
     class Config:
         case_sensitive = False

@@ -28,7 +28,7 @@ const Chat = ({ loginData, setLoginData }) => {
         <div className="User-info"><strong>{username}</strong></div>
       </div>
       <div className="Chat-messages">
-        <ChatMessageInput setMessageInputHeight={setMessageInputHeight} messageInputHeight={messageInputHeight} defaultMessageInputHeight={defaultMessageInputHeight}/>
+        <ChatMessageInput setMessageInputHeight={setMessageInputHeight} messageInputHeight={messageInputHeight} defaultMessageInputHeight={defaultMessageInputHeight} loginData={loginData} />
         <ChatMessagesContainer messageInputHeight={messageInputHeight} loginData={loginData} />
       </div>
     </div>
