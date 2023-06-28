@@ -84,4 +84,84 @@
   margin-bottom: 10px;
   margin-left: 20px;
   margin-right: 20px;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: auto;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 70%;
+}
+
+.sent {
+  align-self: flex-end;
+  background-color: rgb(11, 99, 225);
+  color: white;
+}
+
+.received {
+  align-self: flex-start;
+  background-color: #2b2b2b;
+  color: white;
+}
+
+.message-text {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.message-header {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.file-box {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.received .file-box {
+  background-color: #3d3d3d;
+}
+
+.sent .file-box {
+  background-color: rgb(20, 126, 228);
+}
+
+.received .file-box:hover {
+  background-color: #414141;
+}
+
+.sent .file-box:hover {
+  background-color: rgb(24, 132, 248);
+}
+
+.file-box i {
+  margin-right: 10px;
+}
+
+.file-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.file-name {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.file-size {
+  font-size: 12px;
+}
+
+.received .file-size {
+  color: #777;
 }

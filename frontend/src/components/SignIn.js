@@ -39,10 +39,10 @@ const SignIn = ({ toggleForm, setLoginData }) => {
         setError(message);
       });
   };
-
+  
   return (
     <div className="Auth-form-container" data-bs-theme="dark">
-      <form onSubmit={handleSignIn} className="Auth-form">
+      <form className="Auth-form">
         <div className="Auth-form-content">
           <h3 className="Auth-form-title">Sign In</h3>
           {error && <div className="alert alert-danger">{error}</div>}
@@ -73,7 +73,7 @@ const SignIn = ({ toggleForm, setLoginData }) => {
             />
           </div>
           <div className="d-grid gap-2 mt-3">
-            <button type="submit" className="btn btn-primary">
+            <button type="button" onClick={handleSignIn} className="btn btn-primary">
               Submit
             </button>
           </div>

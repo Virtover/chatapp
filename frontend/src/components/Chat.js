@@ -4,7 +4,7 @@ import ChatMessageInput from './utils/ChatMessageInput';
 import ChatMessagesContainer from './utils/ChatMessagesContainer';
 import './styles/chat.css';
 
-const Chat = ({ setLoginData }) => {
+const Chat = ({ loginData, setLoginData }) => {
   const defaultMessageInputHeight = 40;
   const [messageInputHeight, setMessageInputHeight] = useState(defaultMessageInputHeight);
 
@@ -29,7 +29,7 @@ const Chat = ({ setLoginData }) => {
       </div>
       <div className="Chat-messages">
         <ChatMessageInput setMessageInputHeight={setMessageInputHeight} messageInputHeight={messageInputHeight} defaultMessageInputHeight={defaultMessageInputHeight}/>
-        <ChatMessagesContainer messageInputHeight={messageInputHeight}/>
+        <ChatMessagesContainer messageInputHeight={messageInputHeight} loginData={loginData} />
       </div>
     </div>
   );
