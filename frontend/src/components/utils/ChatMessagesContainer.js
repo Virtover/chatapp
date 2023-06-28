@@ -43,6 +43,7 @@ const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
   const handleMessage = (event) => {
     console.log('Received message:', event.data);
     return; //temp: we dont know event.data structure yet
+    //TODO: check if message is already added
     setMessages(prevMessages => [...prevMessages, event.data]);
   };
 
@@ -65,7 +66,6 @@ const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
   };
   
   const getFilenameFromUrl = (url) => {
-    // Extract the filename from the URL
     const parts = url.split('/');
     return parts[parts.length - 1];
   };
