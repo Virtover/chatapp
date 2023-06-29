@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../styles/chat.css';
-import { API_GATEWAY_WS_URL } from '../../config';
+import { API_GATEWAY_WS_URL, API_GATEWAY_URL } from '../../config';
 
 const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
   const [loading, setLoading] = useState(false);
@@ -78,8 +78,49 @@ const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
   const loadMoreMessages = (count) => {
     if (!loading) {
       setLoading(true);
+      const now = new Date().toISOString()
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: count,
+          endDate: now,
+        }),
+      };
+
+      fetch(`${API_GATEWAY_URL}/load_more`, options)
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          return response.json().then((e) => {
+            setLoading(false);
+            throw new Error(e.detail || "Unknown error");
+          });
+        })
+        .then((json) => {
+          setMessages(prevMessages => 
+            [...prevMessages].concat(
+              json.messages.map((item, index) => ({ 
+                id: prevMessages.length + index + 1,
+                date: new Date(item.date),
+                sender: item.sender,
+                isFile: item.isFile,
+                content: item.content
+              }))
+            )
+          );
+          setLoading(false);
+        })
+        .catch((e) => {
+          const message = e.message;
+          console.log(message);
+          setLoading(false);
+        });
       //TODO: Implement the logic to load more messages; similar to below but with real data; remember to check if message is already added
-      const item = { id: null, date: new Date(), sender: "spammer", isFile: false, content: "older message there!" }; //starttemp
+      /*const item = { id: null, date: new Date(), sender: "spammer", isFile: false, content: "older message there!" }; //starttemp
       setMessages(prevMessages => 
         [...prevMessages].concat(
           Array(count).fill(item).map((item, index) => ({ 
@@ -87,9 +128,7 @@ const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
             id: prevMessages.length + index + 1 
           }))
         )
-      ); //endtemp
-
-      setLoading(false);
+      ); //endtemp*/
     }
   };
 

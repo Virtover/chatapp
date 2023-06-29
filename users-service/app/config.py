@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
     postgres_host: str
     postgres_user: str
-    postgres_password_file: str
+    postgres_password: str
     postgres_db: str
 
     class Config:

@@ -3,12 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 
-with open(settings.postgres_password_file, 'r') as mpf:
-    passwd = mpf.read()
-
 engine = create_async_engine(
     "postgresql+asyncpg://"
-    f"{settings.postgres_user}:{passwd}@"
+    f"{settings.postgres_user}:{settings.postgres_password}@"
     f"{settings.postgres_host}/"
     f"{settings.postgres_db}",
     echo=True,
