@@ -42,8 +42,26 @@ const ChatMessageInput = ({ messageInputHeight, setMessageInputHeight, defaultMe
   const handleSubmitFile = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile != null && webSocketRef.current) {
-      const json = {username: loginData.username, token: loginData.token, isFile: true, content: JSON.stringify(message)};
-      webSocketRef.current.send(JSON.stringify(json));
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const arrayBuffer = event.target.result;
+        const base64String = btoa(
+          new Uint8Array(arrayBuffer)
+            .reduce((data, byte) => data + String.fromCharCode(byte), '')
+        );
+  
+        const fileData = {
+          username: loginData.username,
+          token: loginData.token,
+          isFile: true,
+          content: base64String,
+          filename: selectedFile.name
+        };
+  
+        webSocketRef.current.send(JSON.stringify(fileData));
+      };
+  
+      reader.readAsArrayBuffer(selectedFile);
     }
   };
 

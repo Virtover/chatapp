@@ -18,8 +18,9 @@ const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
     webSocketRef.current = socket;
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      console.log(data)
       setMessages(prevMessages => {
-        if (prevMessages.filter(item => item.id === data.id).length === 0) {
+        if (prevMessages.filter(item => item.id === data.id && item.isFile === data.isFile).length === 0) {
           return [
             {id: data.id, 
             date: new Date(data.date), 
@@ -38,27 +39,25 @@ const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
     };
   }, []);
 
-  const handleDownload = async (url) => {
-    try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      const filename = getFilenameFromUrl(url);
-  
-      const anchor = document.createElement('a');
-      anchor.href = URL.createObjectURL(blob);
-      anchor.download = filename;
-      anchor.click();
-  
-      URL.revokeObjectURL(anchor.href);
-      anchor.remove();
-    } catch (error) {
-      console.error('Error occurred during file download:', error);
-    }
-  };
-  
-  const getFilenameFromUrl = (url) => {
-    const parts = url.split('/');
-    return parts[parts.length - 1];
+  const handleDownload = async (id, filename) => {
+    fetch(`${API_GATEWAY_URL}/download_file/${id}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`File download failed: ${response.status} ${response.statusText}`);
+        }
+        return response.blob();
+      })
+      .then((blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename; 
+        link.click();
+        URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error('Error downloading file:', error);
+      });
   };
 
   const handleScroll = (e) => {
@@ -94,7 +93,7 @@ const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
           });
         })
         .then((json) => {
-          const filtered = json.messages.filter(item1 => messages.every(item2 => item1.id !== item2.id));
+          const filtered = json.messages.filter(item1 => messages.every(item2 => item1.id !== item2.id || item1.isFile !== item2.isFile));
           setMessages(prevMessages => 
             [...prevMessages].concat(
               filtered.map((item, index) => ({ 
@@ -127,7 +126,7 @@ const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
   const renderMessageContent = (message) => {
     if (message.isFile) {
       return (
-        <div className="file-box" onClick={() => handleDownload(message.content.url)}>
+        <div className="file-box" onClick={() => handleDownload(message.content.id, message.content.filename)}>
           <i className="bi bi-file-earmark"></i>
           <div className="file-details">
             <div className="file-name">{message.content.filename}</div>
@@ -147,7 +146,7 @@ const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
     >
       {messages.map((message) => (
         <div
-          key={message.id}
+          key={`${message.date}-${message.id}-${message.isFile}`}
           className={`message ${message.sender === loginData.username ? 'sent' : 'received'}`}
         >
           <div className="message-header">

@@ -2,7 +2,7 @@ import datetime
 import httpx
 import json
 from app.config import settings
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Response
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, Any
 
@@ -73,18 +73,35 @@ async def websocket_endpoint(websocket: WebSocket):
             data = await websocket.receive_json()
             verification = httpx.post(f'{settings.users_service_url}/verify_token', json=data)
             if verification.status_code == 200 and verification.json()['result']:
+                data['date'] = datetime.datetime.utcnow().isoformat()
+                data['sender'] = data['username']
                 if not data['isFile']:
-                    data['date'] = datetime.datetime.utcnow().isoformat()
-                    data['sender'] = data['username']
                     result = httpx.post(f'{settings.messages_service_url}/add_message', json=data)
                     if result.status_code == 200:
                         await manager.broadcast_json(result.json())
                     else:
                         print("failed to add message")
                 else:
-                    print("file there!") #temp, FEATURE TO ADD IN FUTURE!!!
+                    result = httpx.post(f'{settings.messages_service_url}/upload_file', json=data)
+                    if result.status_code == 200:
+                        await manager.broadcast_json(result.json())
+                    else:
+                        print("failed to add file")
     except WebSocketDisconnect:
         manager.disconnect(websocket)
+
+
+@app.get("/download_file/{file_id}")
+async def download_file(file_id: int):
+    async with httpx.AsyncClient() as client:
+        url = f"{settings.messages_service_url}/download_file/{file_id}"
+        proxied_response = await client.get(url, timeout=None)  # Disable timeout
+
+        response = Response(content=proxied_response.content)
+        response.headers.update(proxied_response.headers)
+        response.status_code = proxied_response.status_code
+
+        return response
 
 
 @app.post("/load_more")
