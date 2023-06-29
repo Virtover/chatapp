@@ -95,12 +95,10 @@ const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
         })
         .then((json) => {
           const filtered = json.messages.filter(item1 => messages.every(item2 => item1.id !== item2.id));
-          console.log(json)
-          console.log(filtered)
           setMessages(prevMessages => 
             [...prevMessages].concat(
               filtered.map((item, index) => ({ 
-                id: prevMessages.length + index + 1,
+                id: item.id,
                 date: new Date(item.date),
                 sender: item.sender,
                 isFile: item.isFile,
