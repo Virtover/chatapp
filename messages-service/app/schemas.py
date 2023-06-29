@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 class LoadMoreInput(BaseModel):
     amount: int
-    endDate: datetime
+    offset: int
 
 
 class MessageInput(BaseModel):

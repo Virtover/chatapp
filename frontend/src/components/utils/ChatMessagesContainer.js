@@ -72,7 +72,6 @@ const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
   const loadMoreMessages = (count) => {
     if (!loading) {
       setLoading(true);
-      const now = new Date().toISOString()
       const options = {
         method: "POST",
         headers: {
@@ -80,7 +79,7 @@ const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
         },
         body: JSON.stringify({
           amount: count,
-          endDate: now,
+          offset: messages.length,
         }),
       };
 
@@ -95,7 +94,9 @@ const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
           });
         })
         .then((json) => {
-          const filtered = json.messages.filter(item1 => !messages.some(item2 => item1.id === item2.id));
+          const filtered = json.messages.filter(item1 => messages.every(item2 => item1.id !== item2.id));
+          console.log(json)
+          console.log(filtered)
           setMessages(prevMessages => 
             [...prevMessages].concat(
               filtered.map((item, index) => ({ 

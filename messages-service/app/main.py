@@ -53,11 +53,10 @@ async def load_more(data: LoadMoreInput, db: AsyncSession = Depends(get_session)
     if data.amount < 1 or data.amount > 250:
         raise HTTPException(status=400, detail="Wrong amount")
     
-    end_date = datetime.fromisoformat(str(data.endDate)).replace(tzinfo=None)
     m = await db.scalars(
         select(Message)
-        .where(Message.time_sent <= end_date)
         .order_by(Message.time_sent.desc(), Message.id.desc())
+        .offset(data.offset)
         .limit(data.amount)
     )
     messages = m.all()
