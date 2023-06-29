@@ -7,7 +7,6 @@ This application is a group chat implemented using FastAPI and React. It is comp
 3. **Users Service**: The Users service handles user-related operations, such as user authentication, user registration, and user profile management. It stores user information in a PostgreSQL database.
 4. **Messages Service**: The Messages service manages the storage and retrieval of chat messages. It communicates with other services asynchronously using web sockets for real-time message updates.
 
-
 ## Architecture
 
 The group chat application follows a microservices architecture, where each microservice is responsible for a specific set of functionalities. This architecture provides flexibility, scalability, and modularity to the application.
@@ -28,6 +27,10 @@ To run the group chat application locally, follow these steps:
 2. Run `docker compose build --no-cache` and then `docker compose up`
 
 The site will be available at localhost:3000
+
+## Signing up
+
+In order to register a user, you have to click Sign Up button and proceed to the signup menu. There you need to specify a username (alphanumerics only), email (has to be a valid email) and a password, which has to contain at least 8 characters.
 
 ## License
 
