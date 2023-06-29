@@ -75,7 +75,12 @@ async def websocket_endpoint(websocket: WebSocket):
             if verification.status_code == 200 and verification.json()['result']:
                 if not data['isFile']:
                     data['date'] = datetime.datetime.utcnow().isoformat()
-                    await manager.broadcast_json(data)
+                    data['sender'] = data['username']
+                    result = httpx.post(f'{settings.messages_service_url}/add_message', json=data)
+                    if result.status_code == 200:
+                        await manager.broadcast_json(result.json())
+                    else:
+                        print("failed to add message")
                 else:
                     print("file there!") #temp, FEATURE TO ADD IN FUTURE!!!
     except WebSocketDisconnect:

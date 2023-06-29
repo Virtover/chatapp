@@ -4,18 +4,7 @@ import { API_GATEWAY_WS_URL, API_GATEWAY_URL } from '../../config';
 
 const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
   const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState([
-    { id: 1, date: new Date(), sender: "ultrauser", isFile: false, content: "Message 1" },
-    { id: 2, date: new Date(), sender: "Jane", isFile: false, content: "Message 2" },
-    { id: 3, date: new Date(), sender: "ultrauser", isFile: false, content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
-    { id: 4, date: new Date(), sender: "Unknown", isFile: false, content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
-    { id: 5, date: new Date(), sender: "ultrauser", isFile: false, content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
-    { id: 6, date: new Date(), sender: "Andrzej", isFile: false, content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
-    { id: 7, date: new Date(), sender: "Miriam", isFile: false, content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
-    { id: 8, date: new Date(), sender: "ultrauser", isFile: false, content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." },
-    { id: 9, date: new Date(), sender: "filemaster", isFile: true, content: {filename: "sample.pdf", url: "https://example.com/sample.pdf", size: 1024 }},
-    { id: 10, date: new Date(), sender: "ultrauser", isFile: true, content: {filename: "sample.pdf", url: "https://example.com/sample.pdf", size: 1024 }}
-  ]); //json structure should be: {id, date, sender, isFile, content}
+  const [messages, setMessages] = useState([]); //json structure should be: {id, date, sender, isFile, content}, if isFile then content is: {filename, url, size}
   const webSocketRef = useRef(null);
 
   useEffect(() => {
@@ -29,15 +18,20 @@ const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
     webSocketRef.current = socket;
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      setMessages(prevMessages => [
-          {id: prevMessages.length + 1, 
-          date: new Date(data.date), 
-          sender: data.username, 
-          isFile: data.isFile, 
-          content: data.content}, 
-          ...prevMessages
-        ]
-      );
+      setMessages(prevMessages => {
+        if (prevMessages.filter(item => item.id === data.id).length === 0) {
+          return [
+            {id: data.id, 
+            date: new Date(data.date), 
+            sender: data.sender, 
+            isFile: data.isFile, 
+            content: data.content}, 
+            ...prevMessages
+          ];
+        } else {
+          return [...prevMessages];
+        }
+      });
     };
     return () => {
       socket.close();
@@ -101,9 +95,10 @@ const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
           });
         })
         .then((json) => {
+          const filtered = json.messages.filter(item1 => !messages.some(item2 => item1.id === item2.id));
           setMessages(prevMessages => 
             [...prevMessages].concat(
-              json.messages.map((item, index) => ({ 
+              filtered.map((item, index) => ({ 
                 id: prevMessages.length + index + 1,
                 date: new Date(item.date),
                 sender: item.sender,
@@ -119,16 +114,6 @@ const ChatMessagesContainer = ({ messageInputHeight, loginData }) => {
           console.log(message);
           setLoading(false);
         });
-      //TODO: Implement the logic to load more messages; similar to below but with real data; remember to check if message is already added
-      /*const item = { id: null, date: new Date(), sender: "spammer", isFile: false, content: "older message there!" }; //starttemp
-      setMessages(prevMessages => 
-        [...prevMessages].concat(
-          Array(count).fill(item).map((item, index) => ({ 
-            ...item, 
-            id: prevMessages.length + index + 1 
-          }))
-        )
-      ); //endtemp*/
     }
   };
 

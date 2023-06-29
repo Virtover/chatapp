@@ -2,7 +2,7 @@ import pytz
 from app.database import init_models
 from app.dependencies import get_session
 from app.models import Message
-from app.schemas import LoadMoreInput, LoadMoreOutput, LMMessage
+from app.schemas import LoadMoreInput, LoadMoreOutput, MessageOutput, MessageInput
 from datetime import datetime
 from fastapi import FastAPI, Depends, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -28,6 +28,26 @@ async def on_startup():
     await init_models()
 
 
+@app.post("/add_message", response_model=MessageOutput)
+async def add_message(data: MessageInput, db: AsyncSession = Depends(get_session)):
+    new_message = Message(
+        owner=data.sender,
+        time_sent=data.date,
+        content=data.content
+    )
+
+    db.add(new_message)
+    await db.commit()
+
+    return MessageOutput(
+        sender=new_message.owner,
+        date=new_message.time_sent,
+        content=new_message.content,
+        id=new_message.id,
+        isFile=data.isFile
+    )
+
+
 @app.post("/load_more", response_model=LoadMoreOutput)
 async def load_more(data: LoadMoreInput, db: AsyncSession = Depends(get_session)):
     if data.amount < 1 or data.amount > 250:
@@ -44,11 +64,11 @@ async def load_more(data: LoadMoreInput, db: AsyncSession = Depends(get_session)
     
     result = []
     for msg in messages:
-        result.append(LMMessage(
+        result.append(MessageOutput(
             id=msg.id,
             sender=msg.owner,
             date=msg.time_sent,
-            isFile=True,
+            isFile=False,
             content=msg.content
         ))
     

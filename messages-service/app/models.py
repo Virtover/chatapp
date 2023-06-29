@@ -10,6 +10,6 @@ class Message(Base):
     __tablename__ = "messages"
 
     id = Column(Integer, primary_key=True, index=True)
-    owner = Column(String, unique=True, nullable=False)
-    content = Column(String, unique=True, nullable=False)
+    owner = Column(String, nullable=False)
+    content = Column(String, nullable=False)
     time_sent = Column(DateTime, nullable=False)

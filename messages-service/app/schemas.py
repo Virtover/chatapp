@@ -7,13 +7,16 @@ class LoadMoreInput(BaseModel):
     endDate: datetime
 
 
-class LMMessage(BaseModel):
-    id: int
+class MessageInput(BaseModel):
     sender: str
     date: datetime
     isFile: bool
     content: str
 
 
+class MessageOutput(MessageInput):
+    id: int
+
+
 class LoadMoreOutput(BaseModel):
-    messages: list[LMMessage]
+    messages: list[MessageOutput]
